@@ -218,7 +218,6 @@ def git(registry, xml_parent, data):
         # XXX does this option still exist?
         ("git-tool", 'gitTool', "Default"),
         (None, 'submoduleCfg', '', {'class': 'list'}),
-        ('reference-repo', 'reference', ''),
         ("git-config-name", 'gitConfigName', ''),
         ("git-config-email", 'gitConfigEmail', ''),
     ]
@@ -443,7 +442,8 @@ def git_extensions(xml_parent, data):
     clone_options = (
         "shallow-clone",
         "timeout",
-        "do-not-fetch-tags"
+        "do-not-fetch-tags",
+        "reference-repo"
     )
     if any(key in data for key in clone_options):
         ext_name = impl_prefix + 'CloneOption'
@@ -456,7 +456,7 @@ def git_extensions(xml_parent, data):
 
         clone_mapping = [
             ('shallow-clone', 'shallow', False),
-            ('depth', 'depth', 1),
+            ('depth', 'depth', 1)
         ]
         helpers.convert_mapping_to_xml(
             ext, data, clone_mapping, fail_required=True)
@@ -465,6 +465,8 @@ def git_extensions(xml_parent, data):
                 data.get('do-not-fetch-tags', False)).lower()
         if 'timeout' in data:
             XML.SubElement(ext, 'timeout').text = str(data['timeout'])
+        if 'reference-repo' in data:
+            XML.SubElement(ext, 'reference').text = str(data['reference-repo'])
     if not trait and 'sparse-checkout' in data:
         ext_name = impl_prefix + 'SparseCheckoutPaths'
         ext = XML.SubElement(xml_parent, ext_name)
